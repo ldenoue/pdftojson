@@ -30,8 +30,8 @@ Kernel configured for up to 4 processors.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 8.00 gigabytes
-Default processor set: 276 tasks, 1305 threads, 4 processors
-Load average: 0.96, Mach factor: 3.02
+Default processor set: 282 tasks, 1443 threads, 4 processors
+Load average: 1.38, Mach factor: 2.61
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -370,7 +370,7 @@ configure:5843: checking for fseek64
 configure:5843: gcc -o conftest -g -O2   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_fseek64", referenced from:
-      _main in conftest-24204e.o
+      _main in conftest-c21e51.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5843: $? = 1
@@ -436,7 +436,7 @@ configure:5856: checking for ftell64
 configure:5856: gcc -o conftest -g -O2   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_ftell64", referenced from:
-      _main in conftest-2b4a4d.o
+      _main in conftest-2de0df.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5856: $? = 1

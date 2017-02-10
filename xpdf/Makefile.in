@@ -400,7 +400,7 @@ PDFTOJSON_OBJS = \
 	XpdfPluginAPI.o \
 	XRef.o \
 	Zoox.o \
-	pdftohtml.o
+	pdftojson.o
 PDFTOJSON_LIBS = -L$(GOOLIBDIR) -lGoo $(SPLASHLIBS) $(FTLIBS) \
 	$(OTHERLIBS) $(PNGLIBS) -lm
 
