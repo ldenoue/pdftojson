@@ -362,7 +362,7 @@ int JSONGen::convertPage(
                                 } else if (u == '>') {
                                     s->append("&gt;");
                                 } else {
-                                    s->append((char)u);
+                                    s->append(' ');//(char)u);
                                 }
                         } else if (u <= 0x7ff) {
                             s->append((char)(0xc0 + (u >> 6)));
