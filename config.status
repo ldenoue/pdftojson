@@ -433,7 +433,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/Users/denoue/Downloads/xpdf-3.04'
+ac_pwd='/Users/denoue/examples/pdftojson'
 srcdir='.'
 INSTALL='/usr/local/bin/ginstall -c'
 test -n "$AWK" || AWK=awk

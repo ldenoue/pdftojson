@@ -70,6 +70,7 @@ CXX_SRC = \
 	$(srcdir)/GfxState.cc \
 	$(srcdir)/GlobalParams.cc \
 	$(srcdir)/HTMLGen.cc \
+	$(srcdir)/JSONGen.cc \
 	$(srcdir)/ImageOutputDev.cc \
 	$(srcdir)/JArithmeticDecoder.cc \
 	$(srcdir)/JBIG2Stream.cc \
@@ -118,11 +119,11 @@ CXX_SRC = \
 
 #------------------------------------------------------------------------
 
-all: xpdf$(EXE) pdftops$(EXE) pdftotext$(EXE) pdftohtml$(EXE) \
+all: xpdf$(EXE) pdftops$(EXE) pdftotext$(EXE) pdftohtml$(EXE) pdftojson$(EXE) \
 	pdfinfo$(EXE) pdffonts$(EXE) pdfdetach$(EXE) pdftoppm$(EXE) \
 	pdftopng$(EXE) pdfimages$(EXE)
 
-all-no-x: pdftops$(EXE) pdftotext$(EXE) pdftohtml$(EXE) pdfinfo$(EXE) \
+all-no-x: pdftops$(EXE) pdftotext$(EXE) pdftohtml$(EXE) pdftojson$(EXE) pdfinfo$(EXE) \
 	pdffonts$(EXE) pdfdetach$(EXE) pdfimages$(EXE)
 
 #------------------------------------------------------------------------
