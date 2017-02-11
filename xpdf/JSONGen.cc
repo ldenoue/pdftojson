@@ -361,8 +361,11 @@ int JSONGen::convertPage(
                                     s->append("&lt;");
                                 } else if (u == '>') {
                                     s->append("&gt;");
-                                } else {
-                                    s->append(' ');//(char)u);
+                                } else if (u <= 31){
+                                    s->append(' ');
+                                }
+                                else {
+                                    s->append((char)u);
                                 }
                         } else if (u <= 0x7ff) {
                             s->append((char)(0xc0 + (u >> 6)));
@@ -408,7 +411,7 @@ int JSONGen::convertPage(
     return errNone;
 }
 
-GString *JSONGen::getFontDefn(TextFontInfo *font, double *scale) {
+/*GString *JSONGen::getFontDefn(TextFontInfo *font, double *scale) {
   GString *fontName;
   char *fontName2;
   FontStyleTagInfo *fst;
@@ -489,4 +492,4 @@ GString *JSONGen::getFontDefn(TextFontInfo *font, double *scale) {
 			                    : "sans-serif",
 			 bold ? "bold" : "normal",
 			 italic ? "italic" : "normal");
-}
+}*/
