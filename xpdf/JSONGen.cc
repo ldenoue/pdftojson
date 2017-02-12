@@ -51,7 +51,7 @@
 
 //------------------------------------------------------------------------
 
-struct FontStyleTagInfo {
+/*struct FontStyleTagInfo {
   const char *tag;
   int tagLen;
   GBool bold;
@@ -116,7 +116,7 @@ static SubstFontInfo substFonts[16] = {
   {0.600},
   {0.600},
   {0.600}
-};
+};*/
 
 // Map Unicode indexes from the private use area, following the Adobe
 // Glyph list.
@@ -353,15 +353,21 @@ int JSONGen::convertPage(
                                     s->append("\\t");
                                 } else if (u == '\n') {
                                     s->append("\\n");
+                                } else if (u == '\r') {
+                                    s->append("\\r");
+                                } else if (u == '\b') {
+                                    s->append("\\b");
+                                } else if (u == '\f') {
+                                    s->append("\\f");
                                 } else if (u == '"') {
                                     s->append("\\\"");
-                                } else if (u == '&') {
+                                }/* else if (u == '&') {
                                     s->append("&amp;");
                                 } else if (u == '<') {
                                     s->append("&lt;");
                                 } else if (u == '>') {
                                     s->append("&gt;");
-                                } else if (u <= 31){
+                                }*/ else if (u <= 31){
                                     s->append(' ');
                                 }
                                 else {
