@@ -42,7 +42,8 @@ public:
   void startDoc(PDFDoc *docA);
   int convertPage(int pg,
                   int (*writeHTML)(void *stream, const char *data, int size),
-                  void *htmlStream);
+                  void *htmlStream,int (*writePNG)(void *stream, const char *data, int size),
+                  void *pngStream,void *pngStream2);
 
 private:
 

@@ -76,8 +76,8 @@ int main(int argc, char *argv[]) {
     GString *jsonFilename;
     GString *ownerPW, *userPW;
     JSONGen *jsonGen;
-    GString *htmlFileName, *pngFileName, *pngURL;
-    FILE *jsonFile, *pngFile;
+    GString *htmlFileName, *pngFileName, *pngFileName2, *pngURL;
+    FILE *jsonFile, *pngFile, *pngFile2;
     int pg, err, exitCode;
     GBool ok;
     
@@ -162,8 +162,27 @@ int main(int argc, char *argv[]) {
     fprintf(jsonFile,"[");
     // convert the pages
     for (pg = firstPage; pg <= lastPage; ++pg) {
-        
-        err = jsonGen->convertPage(pg, &writeToFile, jsonFile);
+        pngFileName = GString::format("{0:s}-page{1:d}.png", argv[2], pg);
+        //printf("png=%s\n",pngFileName->getCString());
+        if (!(pngFile = fopen(pngFileName->getCString(), "wb"))) {
+            error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName);
+            fclose(jsonFile);
+            delete pngFileName;
+            delete jsonFilename;
+            goto err2;
+        }
+        pngFileName2 = GString::format("{0:s}-page{1:d}-text.png", argv[2], pg);
+        //printf("png2=%s\n",pngFileName2->getCString());
+        if (!(pngFile2 = fopen(pngFileName2->getCString(), "wb"))) {
+            error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName2);
+            fclose(jsonFile);
+            fclose(pngFile);
+            delete pngFileName;
+            delete pngFileName2;
+            delete jsonFilename;
+            goto err2;
+        }
+        err = jsonGen->convertPage(pg, &writeToFile, jsonFile,&writeToFile, pngFile, pngFile2);
         if (pg < lastPage)
             fprintf(jsonFile,",");
         if (err != errNone) {
@@ -174,6 +193,7 @@ int main(int argc, char *argv[]) {
     }
     fprintf(jsonFile,"]");
     fclose(jsonFile);
+    delete jsonFilename;
     exitCode = 0;
     
     // clean up

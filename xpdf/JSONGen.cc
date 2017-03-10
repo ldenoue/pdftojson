@@ -245,7 +245,7 @@ JSONGen::JSONGen(double backgroundResolutionA) {
   // set up the SplashOutputDev
   paperColor[0] = paperColor[1] = paperColor[2] = 0xff;
   splashOut = new SplashOutputDev(splashModeRGB8, 1, gFalse, paperColor);
-  splashOut->setSkipText(gTrue, gFalse);
+  //splashOut->setSkipText(gTrue, gFalse);
 }
 
 JSONGen::~JSONGen() {
@@ -277,10 +277,28 @@ static int pf(int (*writeFunc)(void *stream, const char *data, int size),
   return ret;
 }
 
+struct PNGWriteInfo {
+    int (*writePNG)(void *stream, const char *data, int size);
+    void *pngStream;
+};
+
+static void pngWriteFunc(png_structp png, png_bytep data, png_size_t size) {
+    PNGWriteInfo *info;
+    
+    info = (PNGWriteInfo *)png_get_progressive_ptr(png);
+    info->writePNG(info->pngStream, (char *)data, (int)size);
+}
+
 int JSONGen::convertPage(
 		 int pg,
 		 int (*writeHTML)(void *stream, const char *data, int size),
-		 void *htmlStream) {
+		 void *htmlStream,
+         int (*writePNG)(void *stream, const char *data, int size),
+         void *pngStream, void *pngStream2) {
+    png_structp png;
+    png_infop pngInfo;
+    PNGWriteInfo writeInfo;
+    SplashBitmap *bitmap;
     Guchar *p;
     double pageW, pageH;
     TextPage *text;
@@ -297,7 +315,63 @@ int JSONGen::convertPage(
     int y, i, u;
     double xMin, xMax;		// bounding box x coordinates
     double yMin, yMax;		// bounding box y coordinates
-    
+
+    // generate the background bitmap (no text)
+    splashOut->setSkipText(gTrue, gFalse);
+    doc->displayPage(splashOut, pg, backgroundResolution, backgroundResolution,
+       0, gFalse, gTrue, gFalse);
+    bitmap = splashOut->getBitmap();
+    if (!(png = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+    NULL, NULL, NULL)) ||
+    !(pngInfo = png_create_info_struct(png))) {
+    return errFileIO;
+    }
+    if (setjmp(png_jmpbuf(png))) {
+    return errFileIO;
+    }
+    writeInfo.writePNG = writePNG;
+    writeInfo.pngStream = pngStream;
+    png_set_write_fn(png, &writeInfo, pngWriteFunc, NULL);
+    png_set_IHDR(png, pngInfo, bitmap->getWidth(), bitmap->getHeight(),
+    8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+    PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+    png_write_info(png, pngInfo);
+    p = bitmap->getDataPtr();
+    for (y = 0; y < bitmap->getHeight(); ++y) {
+    png_write_row(png, (png_bytep)p);
+    p += bitmap->getRowSize();
+    }
+    png_write_end(png, pngInfo);
+    png_destroy_write_struct(&png, &pngInfo);
+
+    // generate bitmap (with text drawn)
+    splashOut->setSkipText(gFalse, gFalse);
+    doc->displayPage(splashOut, pg, backgroundResolution, backgroundResolution,
+                     0, gFalse, gTrue, gFalse);
+    bitmap = splashOut->getBitmap();
+    if (!(png = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+                                        NULL, NULL, NULL)) ||
+        !(pngInfo = png_create_info_struct(png))) {
+        return errFileIO;
+    }
+    if (setjmp(png_jmpbuf(png))) {
+        return errFileIO;
+    }
+    writeInfo.writePNG = writePNG;
+    writeInfo.pngStream = pngStream2;
+    png_set_write_fn(png, &writeInfo, pngWriteFunc, NULL);
+    png_set_IHDR(png, pngInfo, bitmap->getWidth(), bitmap->getHeight(),
+                 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+    png_write_info(png, pngInfo);
+    p = bitmap->getDataPtr();
+    for (y = 0; y < bitmap->getHeight(); ++y) {
+        png_write_row(png, (png_bytep)p);
+        p += bitmap->getRowSize();
+    }
+    png_write_end(png, pngInfo);
+    png_destroy_write_struct(&png, &pngInfo);
+
     // page size
     pageW = doc->getPageCropWidth(pg);
     pageH = doc->getPageCropHeight(pg);
