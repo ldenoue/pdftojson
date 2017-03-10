@@ -1,3 +1,3 @@
-export CFLAGS="-I/usr/local/include/freetype2 -I/usr/local/include"
-export CXXFLAGS="-I/usr/local/include/freetype2 -I/usr/local/include"
+export CFLAGS="-I/usr/include/freetype2 -I/usr/include"
+export CXXFLAGS="-I/usr/include/freetype2 -I/usr/include"
 ./configure
