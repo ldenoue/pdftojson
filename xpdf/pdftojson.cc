@@ -27,6 +27,7 @@ static int firstPage = 1;
 static int lastPage = 0;
 static int resolution = 150;
 static GBool skipInvisible = gFalse;
+static GBool createPng = gFalse;
 static char ownerPassword[33] = "\001";
 static char userPassword[33] = "\001";
 static GBool quiet = gFalse;
@@ -43,6 +44,8 @@ static ArgDesc argDesc[] = {
    "resolution, in DPI (default is 150)"},
   {"-skipinvisible", argFlag, &skipInvisible, 0,
    "do not draw invisible text"},
+  {"-createpng", argFlag, &createPng, 0,
+   "output png with and without text"},
   {"-opw",     argString,   ownerPassword,  sizeof(ownerPassword),
    "owner password (for encrypted files)"},
   {"-upw",     argString,   userPassword,   sizeof(userPassword),
@@ -162,33 +165,52 @@ int main(int argc, char *argv[]) {
     fprintf(jsonFile,"[");
     // convert the pages
     for (pg = firstPage; pg <= lastPage; ++pg) {
-        pngFileName = GString::format("{0:s}-page{1:d}.png", argv[2], pg);
-        //printf("png=%s\n",pngFileName->getCString());
-        if (!(pngFile = fopen(pngFileName->getCString(), "wb"))) {
-            error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName);
-            fclose(jsonFile);
-            delete pngFileName;
-            delete jsonFilename;
-            goto err2;
+        if (createPng)
+        {
+            pngFileName = GString::format("{0:s}-page{1:d}.png", argv[2], pg);
+            //printf("png=%s\n",pngFileName->getCString());
+            if (!(pngFile = fopen(pngFileName->getCString(), "wb"))) {
+                error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName);
+                fclose(jsonFile);
+                delete pngFileName;
+                delete jsonFilename;
+                goto err2;
+            }
+            pngFileName2 = GString::format("{0:s}-page{1:d}-text.png", argv[2], pg);
+            //printf("png2=%s\n",pngFileName2->getCString());
+            if (!(pngFile2 = fopen(pngFileName2->getCString(), "wb"))) {
+                error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName2);
+                fclose(jsonFile);
+                fclose(pngFile);
+                delete pngFileName;
+                delete pngFileName2;
+                delete jsonFilename;
+                goto err2;
+            }
         }
-        pngFileName2 = GString::format("{0:s}-page{1:d}-text.png", argv[2], pg);
-        //printf("png2=%s\n",pngFileName2->getCString());
-        if (!(pngFile2 = fopen(pngFileName2->getCString(), "wb"))) {
-            error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName2);
-            fclose(jsonFile);
-            fclose(pngFile);
-            delete pngFileName;
-            delete pngFileName2;
-            delete jsonFilename;
-            goto err2;
-        }
-        err = jsonGen->convertPage(pg, &writeToFile, jsonFile,&writeToFile, pngFile, pngFile2);
+        err = jsonGen->convertPage(pg, &writeToFile, jsonFile,&writeToFile, pngFile, pngFile2,createPng);
         if (pg < lastPage)
             fprintf(jsonFile,",");
         if (err != errNone) {
             error(errIO, -1, "Error converting page {0:d}", pg);
+            fclose(jsonFile);
+            delete jsonFilename;
+            if (createPng)
+            {
+                fclose(pngFile);
+                fclose(pngFile2);
+                delete pngFileName;
+                delete pngFileName2;
+            }
             exitCode = 2;
             goto err2;
+        }
+        if (createPng)
+        {
+            fclose(pngFile);
+            fclose(pngFile2);
+            delete pngFileName;
+            delete pngFileName2;
         }
     }
     fprintf(jsonFile,"]");

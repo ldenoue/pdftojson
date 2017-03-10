@@ -30,8 +30,8 @@ Kernel configured for up to 4 processors.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 8.00 gigabytes
-Default processor set: 278 tasks, 1284 threads, 4 processors
-Load average: 2.11, Mach factor: 2.39
+Default processor set: 291 tasks, 1519 threads, 4 processors
+Load average: 1.74, Mach factor: 2.25
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -78,27 +78,27 @@ clang: error: unknown argument: '-qversion'
 clang: error: no input files
 configure:2787: $? = 1
 configure:2807: checking whether the C compiler works
-configure:2829: gcc    conftest.c  >&5
+configure:2829: gcc -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c  >&5
 configure:2833: $? = 0
 configure:2881: result: yes
 configure:2884: checking for C compiler default output file name
 configure:2886: result: a.out
 configure:2892: checking for suffix of executables
-configure:2899: gcc -o conftest    conftest.c  >&5
+configure:2899: gcc -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c  >&5
 configure:2903: $? = 0
 configure:2925: result: 
 configure:2947: checking whether we are cross compiling
-configure:2955: gcc -o conftest    conftest.c  >&5
+configure:2955: gcc -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c  >&5
 configure:2959: $? = 0
 configure:2966: ./conftest
 configure:2970: $? = 0
 configure:2985: result: no
 configure:2990: checking for suffix of object files
-configure:3012: gcc -c   conftest.c >&5
+configure:3012: gcc -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.c >&5
 configure:3016: $? = 0
 configure:3037: result: o
 configure:3041: checking whether we are using the GNU C compiler
-configure:3060: gcc -c   conftest.c >&5
+configure:3060: gcc -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.c >&5
 configure:3060: $? = 0
 configure:3069: result: yes
 configure:3078: checking whether gcc accepts -g
@@ -106,11 +106,11 @@ configure:3098: gcc -c -g  conftest.c >&5
 configure:3098: $? = 0
 configure:3139: result: yes
 configure:3156: checking for gcc option to accept ISO C89
-configure:3219: gcc  -c -g -O2  conftest.c >&5
+configure:3219: gcc  -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.c >&5
 configure:3219: $? = 0
 configure:3232: result: none needed
 configure:3253: checking for library containing strerror
-configure:3284: gcc -o conftest -g -O2   conftest.c  >&5
+configure:3284: gcc -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c  >&5
 conftest.c:18:6: warning: incompatible redeclaration of library function 'strerror' [-Wincompatible-library-redeclaration]
 char strerror ();
      ^
@@ -119,7 +119,7 @@ conftest.c:18:6: note: 'strerror' is a builtin with type 'char *(int)'
 configure:3284: $? = 0
 configure:3301: result: none required
 configure:3313: checking for gcc option to accept ISO C99
-configure:3462: gcc  -c -g -O2  conftest.c >&5
+configure:3462: gcc  -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.c >&5
 configure:3462: $? = 0
 configure:3475: result: none needed
 configure:3583: checking for gcc option to accept ISO Standard C
@@ -151,7 +151,7 @@ clang: error: unknown argument: '-qversion'
 clang: error: no input files
 configure:3736: $? = 1
 configure:3740: checking whether we are using the GNU C++ compiler
-configure:3759: g++ -c   conftest.cpp >&5
+configure:3759: g++ -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.cpp >&5
 configure:3759: $? = 0
 configure:3768: result: yes
 configure:3777: checking whether g++ accepts -g
@@ -164,7 +164,7 @@ configure:4026: checking for ranlib
 configure:4042: found /usr/bin/ranlib
 configure:4053: result: ranlib
 configure:4081: checking for OS/2 (with EMX)
-configure:4097: gcc -c -g -O2  conftest.c >&5
+configure:4097: gcc -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.c >&5
 conftest.c:15:1: error: use of undeclared identifier '__EMX__'
 __EMX__
 ^
@@ -191,7 +191,7 @@ configure: failed program was:
 | }
 configure:4104: result: no
 configure:4112: checking for DOS (with DJGPP)
-configure:4128: gcc -c -g -O2  conftest.c >&5
+configure:4128: gcc -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.c >&5
 conftest.c:15:1: error: use of undeclared identifier '__DJGPP__'
 __DJGPP__
 ^
@@ -278,7 +278,7 @@ configure: failed program was:
 | #define SYSTEM_XPDFRC "/usr/local/etc/xpdfrc"
 | /* end confdefs.h.  */
 | #include <X11/Xlib.h>
-configure:4426: gcc -o conftest -g -O2   conftest.c -lX11  >&5
+configure:4426: gcc -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c -lX11  >&5
 conftest.c:11:10: fatal error: 'X11/Xlib.h' file not found
 #include <X11/Xlib.h>
          ^
@@ -305,35 +305,35 @@ configure: failed program was:
 | }
 configure:4465: result: no
 configure:4973: checking for dirent.h that defines DIR
-configure:4992: gcc -c -g -O2  conftest.c >&5
+configure:4992: gcc -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.c >&5
 configure:4992: $? = 0
 configure:5000: result: yes
 configure:5013: checking for library containing opendir
-configure:5044: gcc -o conftest -g -O2   conftest.c  >&5
+configure:5044: gcc -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c  >&5
 configure:5044: $? = 0
 configure:5061: result: none required
 configure:5137: checking for gethostbyname
-configure:5137: g++ -o conftest -g -O2   conftest.cpp  >&5
+configure:5137: g++ -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.cpp  >&5
 configure:5137: $? = 0
 configure:5137: result: yes
 configure:5185: checking select() and fd_set in sys/select.h and sys/bsdtypes.h
-configure:5202: g++ -c -g -O2  conftest.cpp >&5
+configure:5202: g++ -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.cpp >&5
 configure:5202: $? = 0
 configure:5209: result: not needed
 configure:5274: checking FD_ZERO and strings.h or bstring.h
-configure:5291: g++ -c -g -O2  conftest.cpp >&5
+configure:5291: g++ -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.cpp >&5
 configure:5291: $? = 0
 configure:5298: result: not needed
 configure:5365: checking for rewinddir
-configure:5365: g++ -o conftest -g -O2   conftest.cpp  >&5
+configure:5365: g++ -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.cpp  >&5
 configure:5365: $? = 0
 configure:5365: result: yes
 configure:5424: checking for popen
-configure:5424: g++ -o conftest -g -O2   conftest.cpp  >&5
+configure:5424: g++ -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.cpp  >&5
 configure:5424: $? = 0
 configure:5424: result: yes
 configure:5433: checking for mkstemp
-configure:5450: g++ -o conftest -g -O2   conftest.cpp  >&5
+configure:5450: g++ -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.cpp  >&5
 conftest.cpp:20:9: warning: conversion from string literal to 'char *' is deprecated [-Wc++11-compat-deprecated-writable-strings]
 mkstemp("foo");
         ^
@@ -341,7 +341,7 @@ mkstemp("foo");
 configure:5450: $? = 0
 configure:5458: result: yes
 configure:5464: checking for mkstemps
-configure:5481: g++ -o conftest -g -O2   conftest.cpp  >&5
+configure:5481: g++ -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.cpp  >&5
 conftest.cpp:21:10: warning: conversion from string literal to 'char *' is deprecated [-Wc++11-compat-deprecated-writable-strings]
 mkstemps("foo", 0);
          ^
@@ -349,28 +349,28 @@ mkstemps("foo", 0);
 configure:5481: $? = 0
 configure:5489: result: yes
 configure:5496: checking whether select takes fd_set arguments
-configure:5518: g++ -c -g -O2  conftest.cpp >&5
+configure:5518: g++ -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.cpp >&5
 configure:5518: $? = 0
 configure:5525: result: yes
 configure:5532: checking for std::sort
-configure:5552: g++ -c -g -O2  conftest.cpp >&5
+configure:5552: g++ -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.cpp >&5
 configure:5552: $? = 0
 configure:5559: result: yes
 configure:5580: checking for special C compiler options needed for large files
 configure:5625: result: no
 configure:5631: checking for _FILE_OFFSET_BITS value needed for large files
-configure:5656: gcc -c -g -O2  conftest.c >&5
+configure:5656: gcc -c -I/usr/local/include/freetype2 -I/usr/local/include  conftest.c >&5
 configure:5656: $? = 0
 configure:5688: result: no
 configure:5773: checking for _LARGEFILE_SOURCE value needed for large files
-configure:5792: gcc -o conftest -g -O2   conftest.c  >&5
+configure:5792: gcc -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c  >&5
 configure:5792: $? = 0
 configure:5820: result: no
 configure:5843: checking for fseek64
-configure:5843: gcc -o conftest -g -O2   conftest.c  >&5
+configure:5843: gcc -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_fseek64", referenced from:
-      _main in conftest-3a74ec.o
+      _main in conftest-471828.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5843: $? = 1
@@ -433,10 +433,10 @@ configure: failed program was:
 | }
 configure:5843: result: no
 configure:5856: checking for ftell64
-configure:5856: gcc -o conftest -g -O2   conftest.c  >&5
+configure:5856: gcc -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_ftell64", referenced from:
-      _main in conftest-e12884.o
+      _main in conftest-6e54ee.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5856: $? = 1
@@ -503,66 +503,9 @@ configure:7460: result: maybe
 configure:7509: checking where to find the freetype2 header files
 configure:7516: result: 
 configure:7535: checking ft2build.h usability
-configure:7535: gcc -c -g -O2    conftest.c >&5
-conftest.c:52:10: fatal error: 'ft2build.h' file not found
-#include <ft2build.h>
-         ^
-1 error generated.
-configure:7535: $? = 1
-configure: failed program was:
-| /* confdefs.h */
-| #define PACKAGE_NAME ""
-| #define PACKAGE_TARNAME ""
-| #define PACKAGE_VERSION ""
-| #define PACKAGE_STRING ""
-| #define PACKAGE_BUGREPORT ""
-| #define PACKAGE_URL ""
-| #define APPDEFDIR ""
-| #define SYSTEM_XPDFRC "/usr/local/etc/xpdfrc"
-| #define X_DISPLAY_MISSING 1
-| #define HAVE_DIRENT_H 1
-| #define HAVE_REWINDDIR 1
-| #define HAVE_POPEN 1
-| #define HAVE_MKSTEMP 1
-| #define HAVE_MKSTEMPS 1
-| #define HAVE_STD_SORT 1
-| #define HAVE_FSEEKO 1
-| /* end confdefs.h.  */
-| #include <stdio.h>
-| #ifdef HAVE_SYS_TYPES_H
-| # include <sys/types.h>
-| #endif
-| #ifdef HAVE_SYS_STAT_H
-| # include <sys/stat.h>
-| #endif
-| #ifdef STDC_HEADERS
-| # include <stdlib.h>
-| # include <stddef.h>
-| #else
-| # ifdef HAVE_STDLIB_H
-| #  include <stdlib.h>
-| # endif
-| #endif
-| #ifdef HAVE_STRING_H
-| # if !defined STDC_HEADERS && defined HAVE_MEMORY_H
-| #  include <memory.h>
-| # endif
-| # include <string.h>
-| #endif
-| #ifdef HAVE_STRINGS_H
-| # include <strings.h>
-| #endif
-| #ifdef HAVE_INTTYPES_H
-| # include <inttypes.h>
-| #endif
-| #ifdef HAVE_STDINT_H
-| # include <stdint.h>
-| #endif
-| #ifdef HAVE_UNISTD_H
-| # include <unistd.h>
-| #endif
-| #include <ft2build.h>
-configure:7535: result: no
+configure:7535: gcc -c -I/usr/local/include/freetype2 -I/usr/local/include    conftest.c >&5
+configure:7535: $? = 0
+configure:7535: result: yes
 configure:7535: checking ft2build.h presence
 configure:7535: gcc -E    conftest.c
 conftest.c:19:10: fatal error: 'ft2build.h' file not found
@@ -591,15 +534,21 @@ configure: failed program was:
 | /* end confdefs.h.  */
 | #include <ft2build.h>
 configure:7535: result: no
+configure:7535: WARNING: ft2build.h: accepted by the compiler, rejected by the preprocessor!
+configure:7535: WARNING: ft2build.h: proceeding with the compiler's result
 configure:7535: checking for ft2build.h
-configure:7535: result: no
-configure:7616: result: not using freetype2 library
+configure:7535: result: yes
+configure:7564: checking for FT_Get_Name_Index in -lfreetype
+configure:7589: gcc -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c -lfreetype   -lfreetype -lm  >&5
+configure:7589: $? = 0
+configure:7598: result: yes
+configure:7609: result: using freetype2 library
 configure:7668: checking whether to use libpng library
 configure:7675: result: maybe
 configure:7724: checking where to find the libpng header files
 configure:7731: result: 
 configure:7750: checking png.h usability
-configure:7750: gcc -c -g -O2    conftest.c >&5
+configure:7750: gcc -c -I/usr/local/include/freetype2 -I/usr/local/include    conftest.c >&5
 configure:7750: $? = 0
 configure:7750: result: yes
 configure:7750: checking png.h presence
@@ -609,7 +558,7 @@ configure:7750: result: yes
 configure:7750: checking for png.h
 configure:7750: result: yes
 configure:7779: checking for png_write_row in -lpng
-configure:7804: gcc -o conftest -g -O2   conftest.c -lpng   -lpng -lz  >&5
+configure:7804: gcc -o conftest -I/usr/local/include/freetype2 -I/usr/local/include   conftest.c -lpng   -lpng -lz  >&5
 configure:7804: $? = 0
 configure:7813: result: yes
 configure:7824: result: using libpng library
@@ -618,8 +567,8 @@ configure:7884: result: maybe
 configure:7933: checking where to find the libpaper header files
 configure:7940: result: 
 configure:7959: checking paper.h usability
-configure:7959: gcc -c -g -O2    conftest.c >&5
-conftest.c:53:10: fatal error: 'paper.h' file not found
+configure:7959: gcc -c -I/usr/local/include/freetype2 -I/usr/local/include    conftest.c >&5
+conftest.c:56:10: fatal error: 'paper.h' file not found
 #include <paper.h>
          ^
 1 error generated.
@@ -642,6 +591,9 @@ configure: failed program was:
 | #define HAVE_MKSTEMPS 1
 | #define HAVE_STD_SORT 1
 | #define HAVE_FSEEKO 1
+| #define HAVE_FT2BUILD_H 1
+| #define HAVE_FREETYPE_FREETYPE_H 1
+| #define HAVE_SPLASH 1
 | #define HAVE_PNG_H 1
 | /* end confdefs.h.  */
 | #include <stdio.h>
@@ -681,7 +633,7 @@ configure: failed program was:
 configure:7959: result: no
 configure:7959: checking paper.h presence
 configure:7959: gcc -E    conftest.c
-conftest.c:20:10: fatal error: 'paper.h' file not found
+conftest.c:23:10: fatal error: 'paper.h' file not found
 #include <paper.h>
          ^
 1 error generated.
@@ -704,6 +656,9 @@ configure: failed program was:
 | #define HAVE_MKSTEMPS 1
 | #define HAVE_STD_SORT 1
 | #define HAVE_FSEEKO 1
+| #define HAVE_FT2BUILD_H 1
+| #define HAVE_FREETYPE_FREETYPE_H 1
+| #define HAVE_SPLASH 1
 | #define HAVE_PNG_H 1
 | /* end confdefs.h.  */
 | #include <paper.h>
@@ -728,17 +683,15 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on FXPALHW0765.local
 
-config.status:841: creating Makefile
-config.status:944: WARNING:  'Makefile.in' seems to ignore the --datarootdir setting
-config.status:841: creating goo/Makefile
-config.status:841: creating fofi/Makefile
-config.status:841: creating splash/Makefile
-config.status:841: creating xpdf/Makefile
-config.status:841: creating aconf.h
-config.status:1016: aconf.h is unchanged
+config.status:844: creating Makefile
+config.status:947: WARNING:  'Makefile.in' seems to ignore the --datarootdir setting
+config.status:844: creating goo/Makefile
+config.status:844: creating fofi/Makefile
+config.status:844: creating splash/Makefile
+config.status:844: creating xpdf/Makefile
+config.status:844: creating aconf.h
 configure:9364: WARNING: Couldn't find X
 configure:9368: WARNING: Couldn't find Motif
-configure:9372: WARNING: Couldn't find FreeType
 configure:9377: WARNING: -- You will be able to compile pdftops, pdftotext,
         pdfinfo, pdffonts, pdfdetach, and pdfimages, but not xpdf
         or pdftoppm
@@ -753,14 +706,14 @@ ac_cv_env_CCC_set=
 ac_cv_env_CCC_value=
 ac_cv_env_CC_set=
 ac_cv_env_CC_value=
-ac_cv_env_CFLAGS_set=
-ac_cv_env_CFLAGS_value=
+ac_cv_env_CFLAGS_set=set
+ac_cv_env_CFLAGS_value='-I/usr/local/include/freetype2 -I/usr/local/include'
 ac_cv_env_CPPFLAGS_set=
 ac_cv_env_CPPFLAGS_value=
 ac_cv_env_CPP_set=
 ac_cv_env_CPP_value=
-ac_cv_env_CXXFLAGS_set=
-ac_cv_env_CXXFLAGS_value=
+ac_cv_env_CXXFLAGS_set=set
+ac_cv_env_CXXFLAGS_value='-I/usr/local/include/freetype2 -I/usr/local/include'
 ac_cv_env_CXX_set=
 ac_cv_env_CXX_value=
 ac_cv_env_LDFLAGS_set=
@@ -782,9 +735,10 @@ ac_cv_func_popen=yes
 ac_cv_func_rewinddir=yes
 ac_cv_have_x=have_x=no
 ac_cv_header_dirent_dirent_h=yes
-ac_cv_header_ft2build_h=no
+ac_cv_header_ft2build_h=yes
 ac_cv_header_paper_h=no
 ac_cv_header_png_h=yes
+ac_cv_lib_freetype_FT_Get_Name_Index=yes
 ac_cv_lib_png_png_write_row=yes
 ac_cv_objext=o
 ac_cv_path_install='/usr/local/bin/ginstall -c'
@@ -823,11 +777,11 @@ xpdf_cv_sys_os2=no
 
 AR='ar rc'
 CC='gcc'
-CFLAGS='-g -O2'
+CFLAGS='-I/usr/local/include/freetype2 -I/usr/local/include'
 CPP='gcc -E'
 CPPFLAGS=''
 CXX='g++'
-CXXFLAGS='-g -O2'
+CXXFLAGS='-I/usr/local/include/freetype2 -I/usr/local/include'
 DEFS='-DHAVE_CONFIG_H'
 ECHO_C='\c'
 ECHO_N=''
@@ -886,7 +840,7 @@ docdir='${datarootdir}/doc/${PACKAGE}'
 dvidir='${docdir}'
 exec_prefix='${prefix}'
 freetype2_CFLAGS=''
-freetype2_LIBS=''
+freetype2_LIBS='-lfreetype'
 host_alias=''
 htmldir='${docdir}'
 includedir='${prefix}/include'
@@ -931,6 +885,9 @@ target_alias=''
 #define HAVE_MKSTEMPS 1
 #define HAVE_STD_SORT 1
 #define HAVE_FSEEKO 1
+#define HAVE_FT2BUILD_H 1
+#define HAVE_FREETYPE_FREETYPE_H 1
+#define HAVE_SPLASH 1
 #define HAVE_PNG_H 1
 
 configure: exit 0

@@ -1107,7 +1107,7 @@ void TextPage::addChar(GfxState *state, double x, double y,
 
   // subtract char and word spacing from the dx,dy values
   sp = state->getCharSpace();
-  if (c == (CharCode)0x20) {
+  if (c == (CharCode)0x20 || c == (CharCode)0x09) {//Laurent added \t
     sp += state->getWordSpace();
   }
   state->textTransformDelta(sp * state->getHorizScaling(), 0, &dx2, &dy2);
@@ -1135,7 +1135,8 @@ void TextPage::addChar(GfxState *state, double x, double y,
   }
 
   // skip space characters
-  if (uLen == 1 && u[0] == (Unicode)0x20) {
+  if (uLen == 1 && (u[0] == (Unicode)0x20 || u[0] == (CharCode)0x09)) {//Laurent added \t
+    u[0] = (Unicode)0x20;//Laurent overwrite \t into space
     charPos += nBytes;
     return;
   }
