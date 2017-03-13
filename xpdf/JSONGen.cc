@@ -161,6 +161,8 @@ privateUnicodeMap[privateUnicodeMapEnd - privateUnicodeMapStart + 1] = {
 
 //------------------------------------------------------------------------
 
+#define MONO
+
 #if EVAL_MODE
 
 #define EVAL_MODE_MSG "XpdfHTML evaluation - www.glyphandcog.com"
@@ -244,8 +246,12 @@ JSONGen::JSONGen(double backgroundResolutionA) {
 
   // set up the SplashOutputDev
   paperColor[0] = paperColor[1] = paperColor[2] = 0xff;
+#ifdef MONO
+  splashOut = new SplashOutputDev(splashModeMono1, 1, gFalse, paperColor);
+#else
   splashOut = new SplashOutputDev(splashModeRGB8, 1, gFalse, paperColor);
-  //splashOut->setSkipText(gTrue, gFalse);
+#endif
+    //splashOut->setSkipText(gTrue, gFalse);
 }
 
 JSONGen::~JSONGen() {
@@ -334,9 +340,15 @@ int JSONGen::convertPage(
         writeInfo.writePNG = writePNG;
         writeInfo.pngStream = pngStream;
         png_set_write_fn(png, &writeInfo, pngWriteFunc, NULL);
+#ifdef MONO
         png_set_IHDR(png, pngInfo, bitmap->getWidth(), bitmap->getHeight(),
-        8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+        1, PNG_COLOR_TYPE_GRAY, PNG_INTERLACE_NONE,
         PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+#else
+        png_set_IHDR(png, pngInfo, bitmap->getWidth(), bitmap->getHeight(),
+                     8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+                     PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+#endif
         png_write_info(png, pngInfo);
         p = bitmap->getDataPtr();
         for (y = 0; y < bitmap->getHeight(); ++y) {
