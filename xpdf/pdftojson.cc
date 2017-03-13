@@ -79,8 +79,8 @@ int main(int argc, char *argv[]) {
     GString *jsonFilename;
     GString *ownerPW, *userPW;
     JSONGen *jsonGen;
-    GString *htmlFileName, *pngFileName, *pngFileName2, *pngURL;
-    FILE *jsonFile, *pngFile, *pngFile2;
+    GString *htmlFileName, *pngFileName/*, *pngFileName2*/, *pngURL;
+    FILE *jsonFile, *pngFile/*, *pngFile2*/;
     int pg, err, exitCode;
     GBool ok;
     
@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
                 delete jsonFilename;
                 goto err2;
             }
-            pngFileName2 = GString::format("{0:s}-page{1:d}-text.png", argv[2], pg);
+            /*pngFileName2 = GString::format("{0:s}-page{1:d}-text.png", argv[2], pg);
             //printf("png2=%s\n",pngFileName2->getCString());
             if (!(pngFile2 = fopen(pngFileName2->getCString(), "wb"))) {
                 error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName2);
@@ -186,9 +186,9 @@ int main(int argc, char *argv[]) {
                 delete pngFileName2;
                 delete jsonFilename;
                 goto err2;
-            }
+            }*/
         }
-        err = jsonGen->convertPage(pg, &writeToFile, jsonFile,&writeToFile, pngFile, pngFile2,createPng);
+        err = jsonGen->convertPage(pg, &writeToFile, jsonFile,&writeToFile, pngFile, /*pngFile2,*/createPng);
         if (pg < lastPage)
             fprintf(jsonFile,",");
         if (err != errNone) {
@@ -198,9 +198,9 @@ int main(int argc, char *argv[]) {
             if (createPng)
             {
                 fclose(pngFile);
-                fclose(pngFile2);
+                //fclose(pngFile2);
                 delete pngFileName;
-                delete pngFileName2;
+                //delete pngFileName2;
             }
             exitCode = 2;
             goto err2;
@@ -208,9 +208,9 @@ int main(int argc, char *argv[]) {
         if (createPng)
         {
             fclose(pngFile);
-            fclose(pngFile2);
+            //fclose(pngFile2);
             delete pngFileName;
-            delete pngFileName2;
+            //delete pngFileName2;
         }
     }
     fprintf(jsonFile,"]");

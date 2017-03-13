@@ -43,7 +43,7 @@ public:
   int convertPage(int pg,
                   int (*writeHTML)(void *stream, const char *data, int size),
                   void *htmlStream,int (*writePNG)(void *stream, const char *data, int size),
-                  void *pngStream,void *pngStream2, GBool createPng);
+                  void *pngStream,/*void *pngStream2,*/ GBool createPng);
 
 private:
 
