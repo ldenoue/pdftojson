@@ -6,6 +6,10 @@ using XPDF, pdftojson extracts text from PDF files as JSON, including word bound
     ./configure
     make
 
+On MacOS, you might need to specify libpng and libfreetype locations, e.g.
+
+    ./configure --with-libpng-library=/usr/local/Cellar/libpng/1.6.16/lib/  --with-libpng-includes=/usr/local/Cellar/libpng/1.6.16/include/ --with-freetype2-library=/usr/local/lib/ --with-freetype2-includes=/usr/local/include/freetype2/
+
 You will find pdftojson inside the directory xpdf/pdftojson
 
 ## Usage

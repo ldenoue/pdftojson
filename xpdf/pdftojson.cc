@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
     for (pg = firstPage; pg <= lastPage; ++pg) {
         if (createPng)
         {
-            pngFileName = GString::format("{0:s}-page{1:d}.png", argv[2], pg);
+            pngFileName = GString::format("{0:s}-page{1:d}-notext.png", argv[2], pg);
             //printf("png=%s\n",pngFileName->getCString());
             if (!(pngFile = fopen(pngFileName->getCString(), "wb"))) {
                 error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName);
@@ -184,7 +184,7 @@ int main(int argc, char *argv[]) {
         }
         if (createFullPng)
         {
-            pngFileName2 = GString::format("{0:s}-page{1:d}-text.png", argv[2], pg);
+            pngFileName2 = GString::format("{0:s}-page{1:d}.png", argv[2], pg);
             //printf("png2=%s\n",pngFileName2->getCString());
             if (!(pngFile2 = fopen(pngFileName2->getCString(), "wb"))) {
                 error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName2);

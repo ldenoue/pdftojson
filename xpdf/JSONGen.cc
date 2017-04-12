@@ -161,7 +161,7 @@ privateUnicodeMap[privateUnicodeMapEnd - privateUnicodeMapStart + 1] = {
 
 //------------------------------------------------------------------------
 
-#define MONO
+//#define MONO
 
 #if EVAL_MODE
 
