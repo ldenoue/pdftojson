@@ -300,7 +300,7 @@ int JSONGen::convertPage(
 		 int (*writeHTML)(void *stream, const char *data, int size),
 		 void *htmlStream,
          int (*writePNG)(void *stream, const char *data, int size),
-         void *pngStream, /*void *pngStream2,*/ GBool createPng) {
+         void *pngStream, void *pngStream2, GBool createPng) {
     png_structp png;
     png_infop pngInfo;
     PNGWriteInfo writeInfo;
@@ -357,8 +357,11 @@ int JSONGen::convertPage(
         }
         png_write_end(png, pngInfo);
         png_destroy_write_struct(&png, &pngInfo);
+    }
 
-        /*// generate bitmap (with text drawn)
+    if (pngStream2 != NULL)
+    {
+        // generate bitmap (with text drawn)
         splashOut->setSkipText(gFalse, gFalse);
         doc->displayPage(splashOut, pg, backgroundResolution, backgroundResolution,
                          0, gFalse, gTrue, gFalse);
@@ -384,7 +387,7 @@ int JSONGen::convertPage(
             p += bitmap->getRowSize();
         }
         png_write_end(png, pngInfo);
-        png_destroy_write_struct(&png, &pngInfo);*/
+        png_destroy_write_struct(&png, &pngInfo);
     }
 
     // page size

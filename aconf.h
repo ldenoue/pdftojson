@@ -83,7 +83,7 @@
  * One of these is defined if using FreeType 2.
  */
 /* #undef HAVE_FREETYPE_H */
-#define HAVE_FREETYPE_FREETYPE_H 1
+/* #undef HAVE_FREETYPE_FREETYPE_H */
 
 /*
  * This is defined if using libpaper.
@@ -98,7 +98,7 @@
 /*
  * Defined if the Splash library is avaiable.
  */
-#define HAVE_SPLASH 1
+/* #undef HAVE_SPLASH */
 
 /*
  * Enable support for CMYK output.

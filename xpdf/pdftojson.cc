@@ -28,6 +28,7 @@ static int lastPage = 0;
 static int resolution = 150;
 static GBool skipInvisible = gFalse;
 static GBool createPng = gFalse;
+static GBool createFullPng = gFalse;
 static char ownerPassword[33] = "\001";
 static char userPassword[33] = "\001";
 static GBool quiet = gFalse;
@@ -45,6 +46,8 @@ static ArgDesc argDesc[] = {
   {"-skipinvisible", argFlag, &skipInvisible, 0,
    "do not draw invisible text"},
   {"-createpng", argFlag, &createPng, 0,
+   "output png with and without text"},
+  {"-createfullpng", argFlag, &createFullPng, 0,
    "output png with and without text"},
   {"-opw",     argString,   ownerPassword,  sizeof(ownerPassword),
    "owner password (for encrypted files)"},
@@ -79,13 +82,15 @@ int main(int argc, char *argv[]) {
     GString *jsonFilename;
     GString *ownerPW, *userPW;
     JSONGen *jsonGen;
-    GString *htmlFileName, *pngFileName/*, *pngFileName2*/, *pngURL;
-    FILE *jsonFile, *pngFile/*, *pngFile2*/;
+    GString *htmlFileName, *pngFileName, *pngFileName2, *pngURL;
+    FILE *jsonFile, *pngFile, *pngFile2;
     int pg, err, exitCode;
     GBool ok;
     
     exitCode = 99;
     
+    pngFile = NULL;
+    pngFile2 = NULL;
     // parse args
     ok = parseArgs(argDesc, &argc, argv);
     if (!ok || argc != 3 || printVersion || printHelp) {
@@ -176,7 +181,10 @@ int main(int argc, char *argv[]) {
                 delete jsonFilename;
                 goto err2;
             }
-            /*pngFileName2 = GString::format("{0:s}-page{1:d}-text.png", argv[2], pg);
+        }
+        if (createFullPng)
+        {
+            pngFileName2 = GString::format("{0:s}-page{1:d}-text.png", argv[2], pg);
             //printf("png2=%s\n",pngFileName2->getCString());
             if (!(pngFile2 = fopen(pngFileName2->getCString(), "wb"))) {
                 error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName2);
@@ -186,9 +194,9 @@ int main(int argc, char *argv[]) {
                 delete pngFileName2;
                 delete jsonFilename;
                 goto err2;
-            }*/
+            }
         }
-        err = jsonGen->convertPage(pg, &writeToFile, jsonFile,&writeToFile, pngFile, /*pngFile2,*/createPng);
+        err = jsonGen->convertPage(pg, &writeToFile, jsonFile,&writeToFile, pngFile, pngFile2, createPng);
         if (pg < lastPage)
             fprintf(jsonFile,",");
         if (err != errNone) {
@@ -198,9 +206,12 @@ int main(int argc, char *argv[]) {
             if (createPng)
             {
                 fclose(pngFile);
-                //fclose(pngFile2);
                 delete pngFileName;
-                //delete pngFileName2;
+            }
+            if (createFullPng)
+            {
+                fclose(pngFile2);
+                delete pngFileName2;
             }
             exitCode = 2;
             goto err2;
@@ -211,6 +222,11 @@ int main(int argc, char *argv[]) {
             //fclose(pngFile2);
             delete pngFileName;
             //delete pngFileName2;
+        }
+        if (createFullPng)
+        {
+            fclose(pngFile2);
+            delete pngFileName2;
         }
     }
     fprintf(jsonFile,"]");
