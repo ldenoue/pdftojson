@@ -386,6 +386,54 @@ public:
 };
 
 //------------------------------------------------------------------------
+// FormField
+//------------------------------------------------------------------------
+
+class TextoutFormField {
+public:
+
+  TextoutFormField(int xMinA, int yMinA, int xMaxA, int yMaxA,
+	   const char *typeA, GString *nameA, GString *valueA, GString *alternativeTextA)
+    { xMin = xMinA; yMin = yMinA; xMax = xMaxA; yMax = yMaxA;
+      type = new GString(typeA);
+      if (type == NULL)
+        type = new GString();
+      name = nameA;
+      if (name == NULL)
+        name = new GString();
+      value = valueA;
+      if (value == NULL)
+        value = new GString();
+      alternativeText = alternativeTextA;
+      if (alternativeText == NULL)
+        alternativeText = new GString();
+      //printf("%s %s\n",type->getCString(),alternativeText->getCString(),name->getCString(),value->getCString());
+    }
+  ~TextoutFormField();
+
+  int xMin, yMin, xMax, yMax;
+  GString *type;
+  GString *name;
+  GString *value;
+  GString *alternativeText;
+};
+
+TextoutFormField::~TextoutFormField() {
+  if (type) {
+    delete type;
+  }
+  if (name) {
+    delete name;
+  }
+  if (value) {
+    delete value;
+  }
+  if (alternativeText) {
+    delete alternativeText;
+  }
+}
+
+//------------------------------------------------------------------------
 // TextLink
 //------------------------------------------------------------------------
 
@@ -937,6 +985,7 @@ TextPage::TextPage(TextOutputControl *controlA) {
 
   underlines = new GList();
   links = new GList();
+  formfields = new GList();
 
   findCols = NULL;
   findLR = gTrue;
@@ -950,6 +999,7 @@ TextPage::~TextPage() {
   deleteGList(fonts, TextFontInfo);
   deleteGList(underlines, TextUnderline);
   deleteGList(links, TextLink);
+  deleteGList(formfields, TextoutFormField);
   if (findCols) {
     deleteGList(findCols, TextColumn);
   }
@@ -984,6 +1034,8 @@ void TextPage::clear() {
   underlines = new GList();
   deleteGList(links, TextLink);
   links = new GList();
+  deleteGList(formfields, TextoutFormField);
+  formfields = new GList();
 
   if (findCols) {
     deleteGList(findCols, TextColumn);
@@ -1270,6 +1322,13 @@ void TextPage::addLink(double xMin, double yMin, double xMax, double yMax,
     uri = ((LinkURI *)link->getAction())->getURI()->copy();
     links->append(new TextLink(xMin, yMin, xMax, yMax, uri));
   }
+}
+
+void TextPage::addTextoutFormField(int xmin, int ymin, int xmax, int ymax, const char* type, GString *name, GString *value, GString *alttext)
+{
+  TextoutFormField *tf = new TextoutFormField(xmin,ymin,xmax,ymax,type,name,value,alttext);
+  formfields->append(tf);
+  //printf("addTextoutFormField, formfields length=%d\n",formfields->getLength());
 }
 
 //------------------------------------------------------------------------
@@ -4239,6 +4298,7 @@ TextOutputDev::~TextOutputDev() {
 
 void TextOutputDev::startPage(int pageNum, GfxState *state) {
   text->startPage(state);
+  this->page = pageNum;
 }
 
 void TextOutputDev::endPage() {
@@ -4380,6 +4440,19 @@ void TextOutputDev::eoFill(GfxState *state) {
   fill(state);
 }
 
+void TextOutputDev::processFormField(FormField *formfield) {
+  double x1, y1, x2, y2;
+  int xMin, yMin, xMax, yMax, x, y;
+  int lenname;
+  int lenvalue;
+  formfield->getRect(this->page,&xMin,&yMin,&xMax,&yMax);
+  text->addTextoutFormField(xMin, yMin, xMax, yMax,
+    formfield->getType(),
+    formfield->getNameGString(),
+    formfield->getValueGString(),
+    formfield->getAltText(this->page));
+}
+
 void TextOutputDev::processLink(Link *link) {
   double x1, y1, x2, y2;
   int xMin, yMin, xMax, yMax, x, y;
@@ -4453,6 +4526,27 @@ GBool TextOutputDev::findCharRange(int pos, int length,
 
 TextWordList *TextOutputDev::makeWordList() {
   return text->makeWordList();
+}
+
+GString *TextOutputDev::getTextoutFormFields() {
+  GList *list = text->formfields;
+  GString *res = new GString();
+  int len = list->getLength();
+  if (len == 0)
+  {
+    return new GString("[]");
+  }
+  res->append("[");
+
+  for (int i=0;i<len;i++)
+  {
+    TextoutFormField *f = (TextoutFormField *)list->get(i);
+    res->appendf("[{0:d},{1:d},{2:d},{3:d},{4:d},\"{5:s}\",\"{6:s}\",\"{7:s}\",\"{8:s}\"]",f->yMin, f->xMin, (int)(f->xMax-f->xMin+2), (int)(f->yMax-f->yMin+2),page,f->type->getCString(),f->name->getCString(),f->alternativeText->getCString(),f->value->getCString());
+    if (i<len-1)
+      res->append(",");
+  }
+  res->append("]");
+  return res;
 }
 
 TextPage *TextOutputDev::takeText() {

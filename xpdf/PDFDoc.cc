@@ -421,6 +421,10 @@ void PDFDoc::processLinks(OutputDev *out, int page) {
   catalog->getPage(page)->processLinks(out);
 }
 
+void PDFDoc::processForms(OutputDev *out, int page) {
+  catalog->getPage(page)->processForms(out);
+}
+
 GBool PDFDoc::isLinearized() {
   Parser *parser;
   Object obj1, obj2, obj3, obj4, obj5;

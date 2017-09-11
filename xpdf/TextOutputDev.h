@@ -19,6 +19,8 @@
 #include "gtypes.h"
 #include "GfxFont.h"
 #include "OutputDev.h"
+#include "PDFDoc.h"
+#include "Form.h"
 
 class GList;
 class UnicodeMap;
@@ -27,6 +29,7 @@ class TextBlock;
 class TextChar;
 class TextLink;
 class TextPage;
+class TextoutFormField;
 
 //------------------------------------------------------------------------
 
@@ -349,7 +352,7 @@ private:
   void addUnderline(double x0, double y0, double x1, double y1);
   void addLink(double xMin, double yMin, double xMax, double yMax,
 	       Link *link);
-
+  void addTextoutFormField(int xmin, int ymin, int xmax, int ymax, const char *type, GString *name, GString *value, GString *alttext);
   // output
   void writeReadingOrder(void *outputStream,
 			 TextOutputFunc outputFunc,
@@ -440,7 +443,7 @@ private:
 
   GList *underlines;		// [TextUnderline]
   GList *links;			// [TextLink]
-
+  GList *formfields;  // [TextoutFormField]
   GList *findCols;		// text used by the findText function
 				//   [TextColumn]
   GBool findLR;			// primary text direction, used by the
@@ -533,6 +536,9 @@ public:
   //----- link borders
   virtual void processLink(Link *link);
 
+  //----- form fields
+  virtual void processFormField(FormField *formfield);
+
   //----- special access
 
   // Find a string.  If <startAtTop> is true, starts looking at the
@@ -570,11 +576,13 @@ public:
   // Returns the TextPage object for the last rasterized page,
   // transferring ownership to the caller.
   TextPage *takeText();
+  GString *getTextoutFormFields();
 
   // Turn extra processing for HTML conversion on or off.
   void enableHTMLExtras(GBool html) { control.html = html; }
 
 private:
+  int page;
 
   TextOutputFunc outputFunc;	// output function
   void *outputStream;		// output stream

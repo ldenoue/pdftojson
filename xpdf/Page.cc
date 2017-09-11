@@ -457,6 +457,16 @@ void Page::makeBox(double hDPI, double vDPI, int rotate,
   }
 }
 
+void Page::processForms(OutputDev *out) {
+  Form *form;
+
+  if ((form = doc->getCatalog()->getForm())) {
+    for (int i=0;i<form->getNumFields();i++) {
+      out->processFormField(form->getField(i));
+    }
+  }
+}
+
 void Page::processLinks(OutputDev *out) {
   Links *links;
   int i;

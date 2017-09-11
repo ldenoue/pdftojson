@@ -397,9 +397,12 @@ int JSONGen::convertPage(
     // get the PDF text
     doc->displayPage(textOut, pg, 72, 72, 0, gFalse, gTrue, gFalse);
     doc->processLinks(textOut, pg);
+    //printf("Processing forms\n");
+    doc->processForms(textOut, pg);
+    // important to call before takeText because takeText clears the TextPage
+    GString *formfields = textOut->getTextoutFormFields();
     text = textOut->takeText();
-    
-    fprintf((FILE*)htmlStream,"{\"pages\":%d,\"number\":%d,\"width\":%d,\"height\":%d,\"text\":[",doc->getNumPages(),pg,(int)pageW,(int)pageH);
+    fprintf((FILE*)htmlStream,"{\"formfields\":%s,\"pages\":%d,\"number\":%d,\"width\":%d,\"height\":%d,\"text\":[",formfields->getCString(),doc->getNumPages(),pg,(int)pageW,(int)pageH);
     
     first=0;
     // generate the JSON text

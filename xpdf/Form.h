@@ -55,6 +55,10 @@ public:
   virtual Unicode *getName(int *length) = 0;
   virtual Unicode *getValue(int *length) = 0;
 
+  virtual void getRect(int pageNum, int *xMin, int *yMin, int *xMax, int *yMax) { *xMin = 0; *yMin = 0; *xMax = 0; *yMax = 0; };
+  virtual GString *getAltText(int pageNum) { return NULL; };
+  virtual GString *getNameGString() { return new GString(); };
+  virtual GString *getValueGString() { return new GString(); };
   // Return the resource dictionaries used to draw this field.  The
   // returned object must be either a dictionary or an array of
   // dictonaries.

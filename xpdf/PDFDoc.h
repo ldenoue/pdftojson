@@ -127,6 +127,8 @@ public:
 
   // Process the links for a page.
   void processLinks(OutputDev *out, int page);
+  // Process the forms for a page.
+  void processForms(OutputDev *out, int page);
 
 #ifndef DISABLE_OUTLINE
   // Return the outline object.

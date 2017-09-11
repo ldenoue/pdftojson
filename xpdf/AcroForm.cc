@@ -379,6 +379,76 @@ const char *AcroFormField::getType() {
   }
 }
 
+void AcroFormField::getRect(int pageNum, int *xMin, int *yMin, int *xMax, int *yMax)
+{
+  Object kidsObj, annotRef, annotObj;
+  int i;  
+  // find the annotation object(s)
+  if (fieldObj.dictLookup("Kids", &kidsObj)->isArray()) {
+    for (i = 0; i < kidsObj.arrayGetLength(); ++i) {
+      kidsObj.arrayGetNF(i, &annotRef);
+      annotRef.fetch(acroForm->doc->getXRef(), &annotObj);
+      getRectangle(pageNum, &annotRef, &annotObj, xMin, yMin, xMax, yMax);
+      annotObj.free();
+      annotRef.free();
+    }
+  } else {
+    getRectangle(pageNum, &fieldRef, &fieldObj, xMin, yMin, xMax, yMax);
+  }
+  kidsObj.free();
+}
+
+GString *AcroFormField::getAltText(int pageNum)
+{
+  Object kidsObj, annotRef, annotObj;
+  int i;  
+  GString *text;
+  // find the annotation object(s)
+  if (fieldObj.dictLookup("Kids", &kidsObj)->isArray()) {
+    for (i = 0; i < kidsObj.arrayGetLength(); ++i) {
+      kidsObj.arrayGetNF(i, &annotRef);
+      annotRef.fetch(acroForm->doc->getXRef(), &annotObj);
+      text = getAlternativeText(pageNum, &annotRef, &annotObj);
+      annotObj.free();
+      annotRef.free();
+    }
+  } else {
+    text = getAlternativeText(pageNum, &fieldRef, &fieldObj);
+  }
+  kidsObj.free();
+  //printf("text=%s",text->getCString());
+  return text;
+}
+
+GString *AcroFormField::getNameGString() {
+  return name->toPDFTextString();
+}
+
+GString *AcroFormField::getValueGString() {
+  Object obj1;
+  Unicode *u;
+  char *s;
+  //TextString *ts;
+  int n, i;
+
+  fieldLookup("V", &obj1);
+  if (obj1.isName()) {
+    s = obj1.getName();
+    return new GString(s);
+  } else if (obj1.isString()) {
+    return new GString(obj1.getString());
+    /*ts = new TextString(obj1.getString());
+    n = ts->getLength();
+    u = (Unicode *)gmallocn(n, sizeof(Unicode));
+    memcpy(u, ts->getUnicode(), n * sizeof(Unicode));
+    *length = n;
+    delete ts;
+    return u;*/
+  } else {
+    return NULL;
+  }
+}
+
 Unicode *AcroFormField::getName(int *length) {
   Unicode *u, *ret;
   int n;
@@ -438,6 +508,129 @@ void AcroFormField::draw(int pageNum, Gfx *gfx, GBool printing) {
     drawAnnot(pageNum, gfx, printing, &fieldRef, &fieldObj);
   }
   kidsObj.free();
+}
+
+GString *AcroFormField::getAlternativeText(int pageNum, Object *annotRef, Object *annotObj) {
+  Object obj1, obj2;
+  double xMin, yMin, xMax, yMax, t;
+  int annotFlags;
+  GBool oc;
+
+  if (!annotObj->isDict()) {
+    return NULL;
+  }
+
+  //----- get the page number
+
+  // the "P" (page) field in annotations is optional, so we can't
+  // depend on it here
+  if (acroForm->lookupAnnotPage(annotRef) != pageNum) {
+    return NULL;
+  }
+  
+  GString *res = NULL;
+  if (fieldLookup("TU", &obj1)->isString()) {
+    //da = obj1.getString()->copy();
+    //printf("Alternative Text=%s",obj1.getString()->getCString());
+    res = obj1.getString()->copy();
+  }
+  obj1.free();
+  return res;
+}
+
+
+void AcroFormField::getRectangle(int pageNum, Object *annotRef, Object *annotObj,
+        int *xmin, int *ymin, int *xmax, int *ymax) {
+  Object obj1, obj2;
+  double xMin, yMin, xMax, yMax, t;
+  int annotFlags;
+  GBool oc;
+
+  if (!annotObj->isDict()) {
+    return;
+  }
+
+  //----- get the page number
+
+  // the "P" (page) field in annotations is optional, so we can't
+  // depend on it here
+  if (acroForm->lookupAnnotPage(annotRef) != pageNum) {
+    return;
+  }
+
+  //----- check annotation flags
+
+  if (annotObj->dictLookup("F", &obj1)->isInt()) {
+    annotFlags = obj1.getInt();
+  } else {
+    annotFlags = 0;
+  }
+  obj1.free();
+  /*if ((annotFlags & annotFlagHidden) ||
+      (printing && !(annotFlags & annotFlagPrint)) ||
+      (!printing && (annotFlags & annotFlagNoView))) {
+    return;
+  }*/
+
+  //----- check the optional content entry
+
+  annotObj->dictLookupNF("OC", &obj1);
+  if (acroForm->doc->getOptionalContent()->evalOCObject(&obj1, &oc) && !oc) {
+    obj1.free();
+    return;
+  }
+  obj1.free();
+
+  //----- get the bounding box
+
+  if (annotObj->dictLookup("Rect", &obj1)->isArray() &&
+      obj1.arrayGetLength() == 4) {
+    xMin = yMin = xMax = yMax = 0;
+    if (obj1.arrayGet(0, &obj2)->isNum()) {
+      xMin = obj2.getNum();
+    }
+    obj2.free();
+    if (obj1.arrayGet(1, &obj2)->isNum()) {
+      yMin = obj2.getNum();
+    }
+    obj2.free();
+    if (obj1.arrayGet(2, &obj2)->isNum()) {
+      xMax = obj2.getNum();
+    }
+    obj2.free();
+    if (obj1.arrayGet(3, &obj2)->isNum()) {
+      yMax = obj2.getNum();
+    }
+    obj2.free();
+    if (xMin > xMax) {
+      t = xMin; xMin = xMax; xMax = t;
+    }
+    if (yMin > yMax) {
+      t = yMin; yMin = yMax; yMax = t;
+    }
+  } else {
+    error(errSyntaxError, -1, "Bad bounding box for annotation");
+    obj1.free();
+    return;
+  }
+  obj1.free();
+
+  //printf("%f %f %f %f\n",xMin,yMin,xMax,yMax);
+  /*//----- draw it
+
+  if (acroForm->needAppearances) {
+    drawNewAppearance(gfx, annotObj->getDict(),
+		      xMin, yMin, xMax, yMax);
+  } else {
+    drawExistingAppearance(gfx, annotObj->getDict(),
+			   xMin, yMin, xMax, yMax);
+  }*/
+  *xmin = (int)xMin;
+  *ymin = (int)yMin;
+  *xmax = (int)xMax;
+  *ymax = (int)yMax;
+  
+  obj1.free();
 }
 
 void AcroFormField::drawAnnot(int pageNum, Gfx *gfx, GBool printing,

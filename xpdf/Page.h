@@ -183,6 +183,7 @@ public:
 	       PDFRectangle *box, GBool *crop);
 
   void processLinks(OutputDev *out);
+  void processForms(OutputDev *out);
 
   // Get the page's default CTM.
   void getDefaultCTM(double *ctm, double hDPI, double vDPI,

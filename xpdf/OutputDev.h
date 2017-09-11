@@ -30,6 +30,7 @@ class GfxRadialShading;
 class Stream;
 class Links;
 class Link;
+class FormField;
 class Catalog;
 class Page;
 class Function;
@@ -253,6 +254,9 @@ public:
 
   //----- links
   virtual void processLink(Link *link) {}
+
+  //----- form fields
+  virtual void processFormField(FormField *formfield) {}
 
 #if 1 //~tmp: turn off anti-aliasing temporarily
   virtual void setInShading(GBool sh) {}
