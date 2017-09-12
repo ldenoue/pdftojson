@@ -83,6 +83,10 @@ public:
   virtual Unicode *getName(int *length);
   virtual Unicode *getValue(int *length);
 
+  virtual TextString *getNameTS();
+  virtual TextString *getValueTS();
+  virtual TextString *getAltTextTS();
+
   virtual Object *getResources(Object *res);
 
 private:

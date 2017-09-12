@@ -165,6 +165,7 @@ static Guchar code3Of9Data[128][10] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+
 //------------------------------------------------------------------------
 // XFAForm
 //------------------------------------------------------------------------
@@ -425,6 +426,18 @@ Unicode *XFAFormField::getValue(int *length) {
     return NULL;
   }
   return utf8ToUnicode(s, length);
+}
+
+TextString *XFAFormField::getNameTS() {
+  return NULL;
+}
+
+TextString *XFAFormField::getValueTS() {
+  return NULL;
+}
+
+TextString *XFAFormField::getAltTextTS() {
+  return NULL;
 }
 
 Unicode *XFAFormField::utf8ToUnicode(GString *s, int *length) {
