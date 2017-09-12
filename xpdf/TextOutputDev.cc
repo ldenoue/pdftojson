@@ -4445,12 +4445,16 @@ void TextOutputDev::processFormField(FormField *formfield) {
   int xMin, yMin, xMax, yMax, x, y;
   int lenname;
   int lenvalue;
-  formfield->getRect(this->page,&xMin,&yMin,&xMax,&yMax);
-  text->addTextoutFormField(xMin, yMin, xMax, yMax,
-    formfield->getType(),
-    formfield->getNameGString(),
-    formfield->getValueGString(),
-    formfield->getAltText(this->page));
+  GBool res = formfield->getRect(this->page,&xMin,&yMin,&xMax,&yMax);
+  // check that this form field belongs to this page
+  if (res)
+  {
+    text->addTextoutFormField(xMin, yMin, xMax, yMax,
+      formfield->getType(),
+      formfield->getNameGString(),
+      formfield->getValueGString(),
+      formfield->getAltText(this->page));
+  }
 }
 
 void TextOutputDev::processLink(Link *link) {

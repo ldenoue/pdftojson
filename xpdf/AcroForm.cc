@@ -379,23 +379,25 @@ const char *AcroFormField::getType() {
   }
 }
 
-void AcroFormField::getRect(int pageNum, int *xMin, int *yMin, int *xMax, int *yMax)
+GBool AcroFormField::getRect(int pageNum, int *xMin, int *yMin, int *xMax, int *yMax)
 {
   Object kidsObj, annotRef, annotObj;
   int i;  
+  GBool res = gFalse;
   // find the annotation object(s)
   if (fieldObj.dictLookup("Kids", &kidsObj)->isArray()) {
     for (i = 0; i < kidsObj.arrayGetLength(); ++i) {
       kidsObj.arrayGetNF(i, &annotRef);
       annotRef.fetch(acroForm->doc->getXRef(), &annotObj);
-      getRectangle(pageNum, &annotRef, &annotObj, xMin, yMin, xMax, yMax);
+      res = getRectangle(pageNum, &annotRef, &annotObj, xMin, yMin, xMax, yMax);
       annotObj.free();
       annotRef.free();
     }
   } else {
-    getRectangle(pageNum, &fieldRef, &fieldObj, xMin, yMin, xMax, yMax);
+    res = getRectangle(pageNum, &fieldRef, &fieldObj, xMin, yMin, xMax, yMax);
   }
   kidsObj.free();
+  return res;
 }
 
 GString *AcroFormField::getAltText(int pageNum)
@@ -539,7 +541,7 @@ GString *AcroFormField::getAlternativeText(int pageNum, Object *annotRef, Object
 }
 
 
-void AcroFormField::getRectangle(int pageNum, Object *annotRef, Object *annotObj,
+GBool AcroFormField::getRectangle(int pageNum, Object *annotRef, Object *annotObj,
         int *xmin, int *ymin, int *xmax, int *ymax) {
   Object obj1, obj2;
   double xMin, yMin, xMax, yMax, t;
@@ -547,7 +549,7 @@ void AcroFormField::getRectangle(int pageNum, Object *annotRef, Object *annotObj
   GBool oc;
 
   if (!annotObj->isDict()) {
-    return;
+    return gFalse;
   }
 
   //----- get the page number
@@ -555,7 +557,7 @@ void AcroFormField::getRectangle(int pageNum, Object *annotRef, Object *annotObj
   // the "P" (page) field in annotations is optional, so we can't
   // depend on it here
   if (acroForm->lookupAnnotPage(annotRef) != pageNum) {
-    return;
+    return gFalse;
   }
 
   //----- check annotation flags
@@ -564,20 +566,6 @@ void AcroFormField::getRectangle(int pageNum, Object *annotRef, Object *annotObj
     annotFlags = obj1.getInt();
   } else {
     annotFlags = 0;
-  }
-  obj1.free();
-  /*if ((annotFlags & annotFlagHidden) ||
-      (printing && !(annotFlags & annotFlagPrint)) ||
-      (!printing && (annotFlags & annotFlagNoView))) {
-    return;
-  }*/
-
-  //----- check the optional content entry
-
-  annotObj->dictLookupNF("OC", &obj1);
-  if (acroForm->doc->getOptionalContent()->evalOCObject(&obj1, &oc) && !oc) {
-    obj1.free();
-    return;
   }
   obj1.free();
 
@@ -611,26 +599,17 @@ void AcroFormField::getRectangle(int pageNum, Object *annotRef, Object *annotObj
   } else {
     error(errSyntaxError, -1, "Bad bounding box for annotation");
     obj1.free();
-    return;
+    return gFalse;
   }
   obj1.free();
 
-  //printf("%f %f %f %f\n",xMin,yMin,xMax,yMax);
-  /*//----- draw it
-
-  if (acroForm->needAppearances) {
-    drawNewAppearance(gfx, annotObj->getDict(),
-		      xMin, yMin, xMax, yMax);
-  } else {
-    drawExistingAppearance(gfx, annotObj->getDict(),
-			   xMin, yMin, xMax, yMax);
-  }*/
   *xmin = (int)xMin;
   *ymin = (int)yMin;
   *xmax = (int)xMax;
   *ymax = (int)yMax;
   
   obj1.free();
+  return gTrue;
 }
 
 void AcroFormField::drawAnnot(int pageNum, Gfx *gfx, GBool printing,

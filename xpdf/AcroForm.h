@@ -76,7 +76,7 @@ public:
   virtual const char *getType();
   virtual Unicode *getName(int *length);
   virtual Unicode *getValue(int *length);
-  virtual void getRect(int pageNum, int *xMin, int *yMin, int *xMax, int *yMax);
+  virtual GBool getRect(int pageNum, int *xMin, int *yMin, int *xMax, int *yMax);
   virtual GString *getAltText(int pageNum);
   virtual GString *getNameGString();
   virtual GString *getValueGString();
@@ -90,7 +90,7 @@ private:
   void draw(int pageNum, Gfx *gfx, GBool printing);
   void drawAnnot(int pageNum, Gfx *gfx, GBool printing,
 		 Object *annotRef, Object *annotObj);
-  void getRectangle(int pageNum, Object *annotRef, Object *annotObj,
+  GBool getRectangle(int pageNum, Object *annotRef, Object *annotObj,
 		 int *xmin, int *ymin, int *xmax, int *ymax);
   GString *getAlternativeText(int pageNum, Object *annotRef, Object *annotObj);
 
