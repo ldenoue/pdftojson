@@ -399,7 +399,7 @@ int JSONGen::convertPage(
     doc->processLinks(textOut, pg);
     //printf("Processing forms\n");
     doc->processForms(textOut, pg);
-    // important to call before takeText because takeText clears the TextPage
+    // important to call getTextoutFormFields before takeText because takeText clears the TextPage
     GString *formfields = textOut->getTextoutFormFields();
     text = textOut->takeText();
     fprintf((FILE*)htmlStream,"{\"formfields\":%s,\"pages\":%d,\"number\":%d,\"width\":%d,\"height\":%d,\"text\":[",formfields->getCString(),doc->getNumPages(),pg,(int)pageW,(int)pageH);

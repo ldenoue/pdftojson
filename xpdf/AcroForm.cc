@@ -233,7 +233,7 @@ FormField *AcroForm::getField(int idx) {
 
 AcroFormField *AcroFormField::load(AcroForm *acroFormA, Object *fieldRefA) {
   GString *typeStr;
-  TextString *nameA;
+  TextString *nameA, *valueA, *textA;
   Guint flagsA;
   GBool haveFlags;
   Object fieldObjA, parentObj, parentObj2, obj1, obj2;
@@ -243,6 +243,27 @@ AcroFormField *AcroFormField::load(AcroForm *acroFormA, Object *fieldRefA) {
   fieldRefA->fetch(acroFormA->doc->getXRef(), &fieldObjA);
 
   //----- get field info
+
+  if (fieldObjA.dictLookup("T", &obj1)->isString()) {
+    nameA = new TextString(obj1.getString());
+  } else {
+    nameA = new TextString();
+  }
+  obj1.free();
+
+  if (fieldObjA.dictLookup("V", &obj1)->isString()) {
+    valueA = new TextString(obj1.getString());
+  } else {
+    valueA = new TextString();
+  }
+  obj1.free();
+
+  if (fieldObjA.dictLookup("TU", &obj1)->isString()) {
+    textA = new TextString(obj1.getString());
+  } else {
+    textA = new TextString();
+  }
+  obj1.free();
 
   if (fieldObjA.dictLookup("T", &obj1)->isString()) {
     nameA = new TextString(obj1.getString());
@@ -335,26 +356,30 @@ AcroFormField *AcroFormField::load(AcroForm *acroFormA, Object *fieldRefA) {
   delete typeStr;
 
   field = new AcroFormField(acroFormA, fieldRefA, &fieldObjA,
-			    typeA, nameA, flagsA);
+			    typeA, nameA, valueA, textA, flagsA);
   fieldObjA.free();
   return field;
 
  err1:
   delete typeStr;
   delete nameA;
+  delete valueA;
+  delete textA;
   fieldObjA.free();
   return NULL;
 }
 
 AcroFormField::AcroFormField(AcroForm *acroFormA,
 			     Object *fieldRefA, Object *fieldObjA,
-			     AcroFormFieldType typeA, TextString *nameA,
+			     AcroFormFieldType typeA, TextString *nameA, TextString *valueA, TextString *textA,
 			     Guint flagsA) {
   acroForm = acroFormA;
   fieldRefA->copy(&fieldRef);
   fieldObjA->copy(&fieldObj);
   type = typeA;
   name = nameA;
+  value = valueA;
+  alttext = textA;
   flags = flagsA;
 }
 
@@ -400,7 +425,7 @@ GBool AcroFormField::getRect(int pageNum, int *xMin, int *yMin, int *xMax, int *
   return res;
 }
 
-GString *AcroFormField::getAltText(int pageNum)
+/*GString *AcroFormField::getAltText(int pageNum)
 {
   Object kidsObj, annotRef, annotObj;
   int i;  
@@ -439,17 +464,10 @@ GString *AcroFormField::getValueGString() {
     return new GString(s);
   } else if (obj1.isString()) {
     return new GString(obj1.getString());
-    /*ts = new TextString(obj1.getString());
-    n = ts->getLength();
-    u = (Unicode *)gmallocn(n, sizeof(Unicode));
-    memcpy(u, ts->getUnicode(), n * sizeof(Unicode));
-    *length = n;
-    delete ts;
-    return u;*/
   } else {
     return NULL;
   }
-}
+}*/
 
 Unicode *AcroFormField::getName(int *length) {
   Unicode *u, *ret;
@@ -463,7 +481,43 @@ Unicode *AcroFormField::getName(int *length) {
   return ret;
 }
 
-Unicode *AcroFormField::getValue(int *length) {
+TextString *AcroFormField::getNameTS() {
+  return name;
+}
+
+TextString *AcroFormField::getValueTS() {
+  return value;
+}
+
+TextString *AcroFormField::getAltTextTS() {
+  return alttext;
+}
+
+/*Unicode *AcroFormField::getValue(int *length) {
+  Unicode *u, *ret;
+  int n;
+
+  u = value->getUnicode();
+  n = value->getLength();
+  ret = (Unicode *)gmallocn(n, sizeof(Unicode));
+  memcpy(ret, u, n * sizeof(Unicode));
+  *length = n;
+  return ret;
+}
+
+Unicode *AcroFormField::getAltText(int *length) {
+  Unicode *u, *ret;
+  int n;
+
+  u = alttext->getUnicode();
+  n = alttext->getLength();
+  ret = (Unicode *)gmallocn(n, sizeof(Unicode));
+  memcpy(ret, u, n * sizeof(Unicode));
+  *length = n;
+  return ret;
+}*/
+
+/*Unicode *AcroFormField::getValue(int *length) {
   Object obj1;
   Unicode *u;
   char *s;
@@ -491,7 +545,7 @@ Unicode *AcroFormField::getValue(int *length) {
   } else {
     return NULL;
   }
-}
+}*/
 
 void AcroFormField::draw(int pageNum, Gfx *gfx, GBool printing) {
   Object kidsObj, annotRef, annotObj;
@@ -512,7 +566,7 @@ void AcroFormField::draw(int pageNum, Gfx *gfx, GBool printing) {
   kidsObj.free();
 }
 
-GString *AcroFormField::getAlternativeText(int pageNum, Object *annotRef, Object *annotObj) {
+/*GString *AcroFormField::getAlternativeText(int pageNum, Object *annotRef, Object *annotObj) {
   Object obj1, obj2;
   double xMin, yMin, xMax, yMax, t;
   int annotFlags;
@@ -538,8 +592,7 @@ GString *AcroFormField::getAlternativeText(int pageNum, Object *annotRef, Object
   }
   obj1.free();
   return res;
-}
-
+}*/
 
 GBool AcroFormField::getRectangle(int pageNum, Object *annotRef, Object *annotObj,
         int *xmin, int *ymin, int *xmax, int *ymax) {

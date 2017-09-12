@@ -21,6 +21,7 @@
 #include "OutputDev.h"
 #include "PDFDoc.h"
 #include "Form.h"
+#include "TextString.h"
 
 class GList;
 class UnicodeMap;
@@ -29,7 +30,8 @@ class TextBlock;
 class TextChar;
 class TextLink;
 class TextPage;
-class TextoutFormField;
+class TextString;
+//class TextoutFormField;
 
 //------------------------------------------------------------------------
 
@@ -352,7 +354,7 @@ private:
   void addUnderline(double x0, double y0, double x1, double y1);
   void addLink(double xMin, double yMin, double xMax, double yMax,
 	       Link *link);
-  void addTextoutFormField(int xmin, int ymin, int xmax, int ymax, const char *type, GString *name, GString *value, GString *alttext);
+  void addTextoutFormField(int xmin, int ymin, int xmax, int ymax, const char *type, TextString *name, TextString *value, TextString *alttext);
   // output
   void writeReadingOrder(void *outputStream,
 			 TextOutputFunc outputFunc,
