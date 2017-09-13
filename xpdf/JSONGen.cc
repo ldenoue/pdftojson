@@ -251,7 +251,6 @@ JSONGen::JSONGen(double backgroundResolutionA) {
 #else
   splashOut = new SplashOutputDev(splashModeRGB8, 1, gFalse, paperColor);
 #endif
-    //splashOut->setSkipText(gTrue, gFalse);
 }
 
 JSONGen::~JSONGen() {
@@ -325,7 +324,7 @@ int JSONGen::convertPage(
     if (createPng)
     {
         // generate the background bitmap (no text)
-        splashOut->setSkipText(gTrue, gFalse);
+        splashOut->setSkipText(gTrue, gTrue);//horizontal but also non horizontal (e.g. Italic)
         doc->displayPage(splashOut, pg, backgroundResolution, backgroundResolution,
            0, gFalse, gTrue, gFalse);
         bitmap = splashOut->getBitmap();
