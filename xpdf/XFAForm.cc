@@ -23,6 +23,7 @@
 #include "GfxFont.h"
 #include "Zoox.h"
 #include "XFAForm.h"
+#include "TextString.h"
 
 #ifdef _WIN32
 #  define strcasecmp stricmp
@@ -237,7 +238,6 @@ XFAForm *XFAForm::load(PDFDoc *docA, Object *acroFormObj, Object *xfaObj) {
       delete name;
     }
   }
-
   return xfaForm;
 }
 
@@ -389,12 +389,12 @@ const char *XFAFormField::getType() {
 
   if ((uiElem = xml->findFirstChildElement("ui"))) {
     for (node = uiElem->getFirstChild(); node; node = node->getNextChild()) {
-      if (node->isElement("textEdit")) {
-	return "Text";
-      } else if (node->isElement("barcode")) {
-	return "BarCode";
+      if (node->isElement())
+      {
+        ZxElement *elem = (ZxElement *)node;
+        //printf("XFA field type=%s\n",elem->getType()->getCString());
+        return elem->getType()->getCString();
       }
-      //~ other field types go here
     }
   }
   return NULL;
@@ -428,16 +428,176 @@ Unicode *XFAFormField::getValue(int *length) {
   return utf8ToUnicode(s, length);
 }
 
+GBool XFAFormField::getRect(int pageNumA, int *xMin, int *yMin, int *xMax, int *yMax)
+{
+  Page *page;
+  PDFRectangle *pageRect;
+  ZxElement *uiElem;
+  ZxNode *node;
+  ZxAttr *attr;
+  GString *appearBuf;
+  MemStream *appearStream;
+  Object appearDict, appearance, obj1, obj2;
+  double mat[6];
+  double x, y, w, h, x2, y2, w2, h2, x3, y3, w3, h3;
+  double anchorX, anchorY;
+  int pageRot, rot, rot3;
+
+  if (pageNumA != pageNum) {
+    return gFalse;
+  }
+
+  page = xfaForm->doc->getCatalog()->getPage(pageNum);
+  pageRect = page->getMediaBox();
+  pageRot = page->getRotate();
+
+  anchorX = 0;
+  anchorY = 0;
+  if ((attr = xml->findAttr("anchorType"))) {
+    if (!attr->getValue()->cmp("topLeft")) {
+      anchorX = 0;
+      anchorY = 0;
+    } else if (!attr->getValue()->cmp("topCenter")) {
+      anchorX = 0.5;
+      anchorY = 0;
+    } else if (!attr->getValue()->cmp("topRight")) {
+      anchorX = 1;
+      anchorY = 0;
+    } else if (!attr->getValue()->cmp("middleLeft")) {
+      anchorX = 0;
+      anchorY = 0.5;
+    } else if (!attr->getValue()->cmp("middleCenter")) {
+      anchorX = 0.5;
+      anchorY = 0.5;
+    } else if (!attr->getValue()->cmp("middleRight")) {
+      anchorX = 1;
+      anchorY = 0.5;
+    } else if (!attr->getValue()->cmp("bottomLeft")) {
+      anchorX = 0;
+      anchorY = 1;
+    } else if (!attr->getValue()->cmp("bottomCenter")) {
+      anchorX = 0.5;
+      anchorY = 1;
+    } else if (!attr->getValue()->cmp("bottomRight")) {
+      anchorX = 1;
+      anchorY = 1;
+    }
+  }
+
+  x = getMeasurement(xml->findAttr("x"), 0) + xOffset;
+  y = getMeasurement(xml->findAttr("y"), 0) + yOffset;
+  w = getMeasurement(xml->findAttr("w"), 0);
+  h = getMeasurement(xml->findAttr("h"), 0);
+  if ((attr = xml->findAttr("rotate"))) {
+    rot = atoi(attr->getValue()->getCString());
+    if ((rot %= 360) < 0) {
+      rot += 360;
+    }
+  } else {
+    rot = 0;
+  }
+
+  // get annot rect (UL corner, width, height) in XFA coords
+  // notes:
+  // - XFA coordinates are top-left origin, after page rotation
+  // - XFA coordinates are dependent on choice of anchor point
+  //   and field rotation
+  switch (rot) {
+  case 0:
+  default:
+    x2 = x - anchorX * w;
+    y2 = y - anchorY * h;
+    w2 = w;
+    h2 = h;
+    break;
+  case 90:
+    x2 = x - anchorY * h;
+    y2 = y - (1 - anchorX) * w;
+    w2 = h;
+    h2 = w;
+    break;
+  case 180:
+    x2 = x - (1 - anchorX) * w;
+    y2 = y - (1 - anchorY) * h;
+    w2 = w;
+    h2 = h;
+    break;
+  case 270:
+    x2 = x - (1 - anchorY) * h;
+    y2 = y - anchorX * w;
+    w2 = h;
+    h2 = w;
+    break;
+  }
+
+  // convert annot rect to PDF coords (LL corner, width, height),
+  // taking page rotation into account
+  switch (pageRot) {
+  case 0:
+  default:
+    x3 = pageRect->x1 + x2;
+    y3 = pageRect->y2 - (y2 + h2);
+    w3 = w2;
+    h3 = h2;
+    break;
+  case 90:
+    x3 = pageRect->x1 + y2;
+    y3 = pageRect->y1 + x2;
+    w3 = h2;
+    h3 = w2;
+    break;
+  case 180:
+    x3 = pageRect->x2 - (x2 + w2);
+    y3 = pageRect->y1 + y2;
+    w3 = w2;
+    h3 = h2;
+    break;
+  case 270:
+    x3 = pageRect->x2 - (y2 + h2);
+    y3 = pageRect->y1 + (x2 + w2);
+    w3 = h2;
+    h3 = w2;
+    break;
+  }
+  *xMin = x3;
+  *yMin = y3;
+  *xMax = x3+w3;
+  *yMax = y3+h3;
+  return gTrue;
+}
+
 TextString *XFAFormField::getNameTS() {
-  return NULL;
+  return new TextString(name);
 }
 
 TextString *XFAFormField::getValueTS() {
-  return NULL;
+  ZxElement *uiElem;
+  ZxNode *node;
+  GString *s;
+
+  //~ assumes value is UTF-8
+  s = NULL;
+  if ((uiElem = xml->findFirstChildElement("ui"))) {
+    for (node = uiElem->getFirstChild(); node; node = node->getNextChild()) {
+      if (node->isElement("textEdit")) {
+	s = getFieldValue("text");
+      } else if (node->isElement("barcode")) {
+	s = getFieldValue("text");
+      }
+      //~ other field types go here
+      s = getFieldValue("text");
+    }
+  }
+  if (s == NULL)
+    return new TextString();
+  else
+  {
+    return new TextString(s);
+  }
 }
 
 TextString *XFAFormField::getAltTextTS() {
-  return NULL;
+  return new TextString();
 }
 
 Unicode *XFAFormField::utf8ToUnicode(GString *s, int *length) {

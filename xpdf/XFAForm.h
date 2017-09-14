@@ -86,6 +86,7 @@ public:
   virtual TextString *getNameTS();
   virtual TextString *getValueTS();
   virtual TextString *getAltTextTS();
+  virtual GBool getRect(int pageNum, int *xMin, int *yMin, int *xMax, int *yMax);
 
   virtual Object *getResources(Object *res);
 
