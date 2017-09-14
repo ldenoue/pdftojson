@@ -561,8 +561,8 @@ GBool XFAFormField::getRect(int pageNumA, int *xMin, int *yMin, int *xMax, int *
   }
   *xMin = x3;
   *yMin = y3;
-  *xMax = x3+w3;
-  *yMax = y3+h3;
+  *xMax = x3+w3-1;
+  *yMax = y3+h3-1;
   return gTrue;
 }
 
