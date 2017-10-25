@@ -378,7 +378,12 @@ void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
 	printf("***** Annotations\n");
       }
       for (i = 0; i < annotList->getNumAnnots(); ++i) {
-	annotList->getAnnot(i)->draw(gfx, printing);
+          if (strcmp(annotList->getAnnot(i)->getType()->getCString(),"Link") == 0) {
+              // Laurent: not drawing links
+              //printf("link\n");
+          } else {
+            annotList->getAnnot(i)->draw(gfx, printing);
+          }
       }
       out->dump();
     }
