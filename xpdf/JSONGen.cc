@@ -431,7 +431,7 @@ int JSONGen::convertPage(
                         continue;
                     }
                     word1->getBBox(&xMin, &yMin, &xMax, &yMax);
-                    s->appendf("[{0:d},{1:d},{2:d},{3:d},0,\"",(int)yMin, (int)xMin, (int)(xMax-xMin+2), (int)(yMax-yMin+2));
+                    s->appendf("[{0:d},{1:d},{2:d},{3:d},{4:d},\"",(int)yMin, (int)xMin, (int)(xMax-xMin+2), (int)(yMax-yMin+2),(int)word1->getBaseline());
                     for (i = 0; i < word1->getLength(); ++i) {
                         u = word1->getChar(i);
                         if (u >= privateUnicodeMapStart &&

@@ -3434,7 +3434,9 @@ TextLine *TextPage::buildLine(TextBlock *blk) {
       ch = (TextChar *)charsA->get(j-1);
       ch2 = (TextChar *)charsA->get(j);
       sp = (blk->rot & 1) ? (ch2->yMin - ch->yMax) : (ch2->xMin - ch->xMax);
-      if (sp > wordSp ||
+        // Laurent: force generating words delimited by spaces
+      if (ch->c == 32 || ch->c == 160 || sp > wordSp ||
+        //if (((ch->c < 'A' && ch->c > 'Z') || (ch->c < 'a' && ch->c > 'z')) || sp > wordSp ||
 	  ch->font != ch2->font ||
 	  fabs(ch->fontSize - ch2->fontSize) > 0.01 ||
 	  (control.mode == textOutRawOrder &&
