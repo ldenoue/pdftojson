@@ -389,9 +389,11 @@ int JSONGen::convertPage(
         png_destroy_write_struct(&png, &pngInfo);
     }
 
-    // page size
-    pageW = doc->getPageCropWidth(pg);
-    pageH = doc->getPageCropHeight(pg);
+    // page size (always in 72 dpi!!!)
+    double defaultDPI = 72;
+    double scaleFactor  = backgroundResolution / defaultDPI;
+    pageW = doc->getPageCropWidth(pg) * scaleFactor;
+    pageH = doc->getPageCropHeight(pg) * scaleFactor;
     
     // get the PDF text
     doc->displayPage(textOut, pg, backgroundResolution, backgroundResolution, 0, gFalse, gTrue, gFalse);
