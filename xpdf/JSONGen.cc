@@ -394,7 +394,7 @@ int JSONGen::convertPage(
     pageH = doc->getPageCropHeight(pg);
     
     // get the PDF text
-    doc->displayPage(textOut, pg, 72, 72, 0, gFalse, gTrue, gFalse);
+    doc->displayPage(textOut, pg, backgroundResolution, backgroundResolution, 0, gFalse, gTrue, gFalse);
     doc->processLinks(textOut, pg);
     //printf("Processing forms\n");
     doc->processForms(textOut, pg);
